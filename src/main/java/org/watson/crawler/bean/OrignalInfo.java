@@ -1,9 +1,9 @@
-package bean;
+package org.watson.crawler.bean;
 
 /**
- * Created by watson zhang on 16/9/20.
+ * Created by watson zhang on 16/9/29.
  */
-public class SrcUrl {
+public class OrignalInfo {
     String url;
 
     int type;
