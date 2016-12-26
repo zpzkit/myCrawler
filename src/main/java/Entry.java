@@ -3,14 +3,8 @@ import org.slf4j.LoggerFactory;
 import org.watson.crawler.Dao.BasicNet;
 import org.watson.crawler.bean.OriginalInfo;
 import org.watson.crawler.platform.chinadaily.DailyHtmlParse;
-import org.watson.crawler.platform.tieba.TiebaUrlParse;
 import org.watson.crawler.utils.RedisUtil;
 import org.watson.crawler.utils.StaticUtil;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.List;
 
 /**
  * Created by watson zhang on 16/9/28.

@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 /**
  * Created by watson zhang on 16/9/28.
  */
-public class TiebaUrlParse implements HtmlParse<OriginalInfo>{
+public class TiebaUrlParse implements HtmlParse<OriginalInfo> {
     private static Logger logger = LoggerFactory.getLogger(TiebaUrlParse.class);
     String hrefRge = "href=\"([^\":>]*)\"";
     String hostRge = "http://([^/]+)";
