@@ -1,7 +1,8 @@
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.watson.crawler.Dao.BasicNet;
-import org.watson.crawler.bean.OrignalInfo;
+import org.watson.crawler.bean.OriginalInfo;
+import org.watson.crawler.platform.chinadaily.DailyHtmlParse;
 import org.watson.crawler.platform.tieba.TiebaUrlParse;
 import org.watson.crawler.utils.RedisUtil;
 import org.watson.crawler.utils.StaticUtil;
@@ -25,17 +26,20 @@ public class Entry {
         logger.error("test");
 
         BasicNet basicNet = new BasicNet();
-        String url = "http://tieba.baidu.com/f?kw=nba";
+        String url = "http://www.chinadaily.com.cn/";
         String charset = "utf8";
         String html = basicNet.getHtml(url, charset);
         //String s = baseNet.encodeUrl(url, StaticUtil.GB2312);
         String urlEncode = StaticUtil.chineseEncode(url);
-        TiebaUrlParse parse = new TiebaUrlParse();
-        OrignalInfo orignalInfo = new OrignalInfo();
+        OriginalInfo orignalInfo = new OriginalInfo();
         orignalInfo.setType(0);
         orignalInfo.setUrl(url);
         orignalInfo.setRefer(null);
-        parse.urlClassify(orignalInfo, html);
+        DailyHtmlParse dailyHtmlParse = new DailyHtmlParse();
+        dailyHtmlParse.getUrls(url, html);
+
+        //TiebaUrlParse parse = new TiebaUrlParse();
+        //parse.urlClassify(orignalInfo, html);
 
 /*
         List<OrignalInfo> homeUrls = parse.getHomeUrls(url, html);

@@ -2,11 +2,11 @@ package org.watson.crawler.platform.tieba;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.watson.crawler.bean.OrignalInfo;
+import org.watson.crawler.bean.OriginalInfo;
+import org.watson.crawler.platform.HtmlParse;
 import org.watson.crawler.utils.StaticUtil;
 
 import java.util.ArrayList;
@@ -17,12 +17,13 @@ import java.util.regex.Pattern;
 /**
  * Created by watson zhang on 16/9/28.
  */
-public class TiebaUrlParse {
+public class TiebaUrlParse implements HtmlParse<OriginalInfo>{
     private static Logger logger = LoggerFactory.getLogger(TiebaUrlParse.class);
     String hrefRge = "href=\"([^\":>]*)\"";
     String hostRge = "http://([^/]+)";
 
-    public List<OrignalInfo> getHomeUrls(String url, String srcHtmlPage){
+    @Override
+    public List<OriginalInfo> getUrls(String url, String srcHtmlPage){
 
         Matcher m = Pattern.compile(hostRge).matcher(url);
         String host = null;
@@ -35,9 +36,9 @@ public class TiebaUrlParse {
             return null;
         }
         m = Pattern.compile(hrefRge).matcher(srcHtmlPage);
-        List<OrignalInfo> srcUrls = new ArrayList<>();
+        List<OriginalInfo> srcUrls = new ArrayList<>();
         while (m.find()){
-            OrignalInfo srcUrl = new OrignalInfo();
+            OriginalInfo srcUrl = new OriginalInfo();
             if (m.group(1).length() > 2){
                 srcUrl.setUrl(host + "/"+m.group(1));
                 srcUrl.setType(0);
@@ -48,7 +49,12 @@ public class TiebaUrlParse {
         return null;
     }
 
-    public void urlClassify(OrignalInfo orignalInfo, String srcHtmlPage){
+    @Override
+    public String getHtmlContent(String url, String srcHtmlPage) {
+        return null;
+    }
+
+    public void urlClassify(OriginalInfo orignalInfo, String srcHtmlPage){
         Document document = Jsoup.parse(srcHtmlPage);
         String kwRge = "kw=([^/]+)";
         Elements select = document.select("head > meta:nth-child(2)");

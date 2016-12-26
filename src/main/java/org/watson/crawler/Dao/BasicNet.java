@@ -8,20 +8,17 @@ import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.cookie.BasicClientCookie;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.watson.crawler.bean.OrignalInfo;
+import org.watson.crawler.bean.OriginalInfo;
 import org.watson.crawler.utils.ExceptionUtil;
 import org.watson.crawler.utils.StaticUtil;
 
 import java.io.*;
 import java.nio.charset.Charset;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by watson zhang on 16/9/19.
  */
-public class BasicNet implements BasicCrawler<OrignalInfo>{
+public class BasicNet implements BasicCrawler<OriginalInfo>{
     private static Logger logger = LoggerFactory.getLogger(BasicNet.class);
 
     @Override

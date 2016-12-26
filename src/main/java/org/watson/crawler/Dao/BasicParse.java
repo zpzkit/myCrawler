@@ -1,7 +1,8 @@
 package org.watson.crawler.Dao;
 
 
-import org.watson.crawler.bean.OrignalInfo;
+
+import org.watson.crawler.bean.OriginalInfo;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,7 +12,7 @@ import java.util.regex.Pattern;
  */
 public class BasicParse {
 
-    public void parseUrl(OrignalInfo srcUrl){
+    public void parseUrl(OriginalInfo srcUrl){
         if (srcUrl == null){
             return;
         }
