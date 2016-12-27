@@ -1,3 +1,5 @@
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.watson.crawler.Dao.BasicNet;
@@ -36,8 +38,8 @@ public class Entry {
     public static void main(String[] args){
 
         BasicNet basicNet = new BasicNet();
-        String url = "http://www.chinadaily.com.cn/";
-        //String url = "http://www.chinadaily.com.cn/china/2016-04/15/content_24573534_4.htm";
+        //String url = "http://www.chinadaily.com.cn/";
+        String url = "http://www.chinadaily.com.cn/china/2016-04/15/content_24573534_4.htm";
         //String url = "http://www.chinadaily.com.cn/china/2016-12/26/content_27771941.htm";
         Entry entry = new Entry();
         entry.crawlerTask(url);
@@ -55,8 +57,9 @@ public class Entry {
             logger.error("get html error! url:{}", startUrl);
             return;
         }
+        Document pageDocument = Jsoup.parse(html);
 
-        List<String> urls = dailyHtmlParse.getUrls(startUrl, html);
+        List<String> urls = dailyHtmlParse.getUrls(pageDocument);
         waitUrlList.addAll(urls);
         if (dailyHtmlParse.ifIncludeAuthor(startUrl, html)){
             logger.info("zhouxingzuo_url_path:{}", startUrl);
@@ -76,16 +79,18 @@ public class Entry {
         String html = basicNet.getHtml(url, charset);
         if (html == null){
             this.removeUrl(url);
-            //logger.error("get html error! url:{}", url);
+            logger.error("get html error! url:{}", url);
             return;
         }
+        Document pageDocument = Jsoup.parse(html);
+
         if (dailyHtmlParse.ifIncludeAuthor(url, html)){
             logger.info("zhouxingzuo_url_path:{}", url);
         }
 
         this.removeUrl(url);
 
-        List<String> urls = dailyHtmlParse.getUrls(url, html);
+        List<String> urls = dailyHtmlParse.getUrls(pageDocument);
         for (String s : urls) {
             if (!catchUrlList.contains(s) && !waitUrlList.contains(s)){
                 waitUrlList.add(s);
@@ -102,8 +107,6 @@ public class Entry {
     }
 
     public void outputInfo(){
-        logger.info("waitUrlList:{}", waitUrlList.size());
-        logger.info("catchUrlList:{}", catchUrlList.size());
-        logger.info("Time-consuming/m:{}", (System.currentTimeMillis() - startTime)/60000);
+        logger.info("waitUrlList:{}, catchUrlList:{}, Time-consuming/m:{}", waitUrlList.size(), catchUrlList.size(), (System.currentTimeMillis() - startTime)/60000);
     }
 }
