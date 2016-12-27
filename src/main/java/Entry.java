@@ -1,10 +1,12 @@
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.watson.crawler.Dao.BasicNet;
-import org.watson.crawler.bean.OriginalInfo;
 import org.watson.crawler.platform.chinadaily.DailyHtmlParse;
-import org.watson.crawler.utils.RedisUtil;
-import org.watson.crawler.utils.StaticUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by watson zhang on 16/9/28.
@@ -14,37 +16,97 @@ public class Entry {
     private static Logger logger = LoggerFactory.getLogger(BasicNet.class);
 
     private static String tiebaRedisHead = "u:s:t:";
+    private static String chinaDailyRedisHead = "u:s:cd:";
+
+    String charset = "utf8";
+    DailyHtmlParse dailyHtmlParse;
+    BasicNet basicNet;
+    List<String> waitUrlList;
+    List<String> catchUrlList;
+    long startTime;
+    long timeMinute;
+
+    public Entry(){
+        dailyHtmlParse = new DailyHtmlParse();
+        basicNet = new BasicNet();
+        waitUrlList = new ArrayList<>();
+        catchUrlList = new ArrayList<>();
+        startTime = System.currentTimeMillis();
+    }
+
 
     public static void main(String[] args){
-        RedisUtil redisUtil = RedisUtil.getInstance();
-        logger.error("test");
 
         BasicNet basicNet = new BasicNet();
-        String url = "http://www.chinadaily.com.cn/";
-        String charset = "utf8";
-        String html = basicNet.getHtml(url, charset);
-        //String s = baseNet.encodeUrl(url, StaticUtil.GB2312);
-        String urlEncode = StaticUtil.chineseEncode(url);
-        OriginalInfo orignalInfo = new OriginalInfo();
-        orignalInfo.setType(0);
-        orignalInfo.setUrl(url);
-        orignalInfo.setRefer(null);
-        DailyHtmlParse dailyHtmlParse = new DailyHtmlParse();
-        dailyHtmlParse.getUrls(url, html);
+        //String url = "http://www.chinadaily.com.cn/";
+        String url = "http://www.chinadaily.com.cn/china/2016-04/15/content_24573534_4.htm";
+        //String url = "http://www.chinadaily.com.cn/china/2016-12/26/content_27771941.htm";
+        Entry entry = new Entry();
+        entry.crawlerTask(url);
 
-        //TiebaUrlParse parse = new TiebaUrlParse();
-        //parse.urlClassify(orignalInfo, html);
 
-/*
-        List<OrignalInfo> homeUrls = parse.getHomeUrls(url, html);
-        for (OrignalInfo homeUrl : homeUrls) {
-            redisUtil.redis.hset(homeUrl.getUrl(), "type", String.valueOf(homeUrl.getType()));
-            if (homeUrl.getRefer() != null){
-                redisUtil.redis.hset(homeUrl.getUrl(), "refer", homeUrl.getRefer());
+    }
+
+    public void crawlerTask(String startUrl){
+        if (startUrl == null || startUrl.isEmpty()){
+            logger.error("start url is null");
+            return;
+        }
+        String html = basicNet.getHtml(startUrl, charset);
+        if (html == null){
+            logger.error("get html error! url:{}", startUrl);
+            return;
+        }
+        Document pageDocument = Jsoup.parse(html);
+
+        List<String> urls = dailyHtmlParse.getUrls(pageDocument);
+        waitUrlList.addAll(urls);
+        if (dailyHtmlParse.ifIncludeAuthor(startUrl, html)){
+            logger.info("zhouxingzuo_url_path:{}", startUrl);
+        }
+
+        while (!waitUrlList.isEmpty()){
+            this.recursionCrawler(waitUrlList.get(0));
+
+            if ((System.currentTimeMillis() - startTime)/60000  > timeMinute){
+                timeMinute++;
+                this.outputInfo();
             }
         }
-*/
+    }
 
-        System.out.println(urlEncode);
+    public void recursionCrawler(String url){
+        String html = basicNet.getHtml(url, charset);
+        if (html == null){
+            this.removeUrl(url);
+            logger.error("get html error! url:{}", url);
+            return;
+        }
+        Document pageDocument = Jsoup.parse(html);
+
+        if (dailyHtmlParse.ifIncludeAuthor(url, html)){
+            logger.info("zhouxingzuo_url_path:{}", url);
+        }
+
+        this.removeUrl(url);
+
+        List<String> urls = dailyHtmlParse.getUrls(pageDocument);
+        for (String s : urls) {
+            if (!catchUrlList.contains(s) && !waitUrlList.contains(s)){
+                waitUrlList.add(s);
+            }
+        }
+    }
+
+    public void removeUrl(String url){
+        if (url == null || url.isEmpty()){
+            return;
+        }
+        waitUrlList.remove(url);
+        catchUrlList.add(url);
+    }
+
+    public void outputInfo(){
+        logger.info("waitUrlList:{}, catchUrlList:{}, Time-consuming/m:{}", waitUrlList.size(), catchUrlList.size(), (System.currentTimeMillis() - startTime)/60000);
     }
 }

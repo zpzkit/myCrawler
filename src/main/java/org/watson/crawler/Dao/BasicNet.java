@@ -6,6 +6,10 @@ import org.apache.http.client.fluent.Request;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.cookie.BasicClientCookie;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.watson.crawler.bean.OriginalInfo;
@@ -29,14 +33,29 @@ public class BasicNet implements BasicCrawler<OriginalInfo>{
 
         try {
             String s = Executor.newInstance().execute(
-                    Request.Get(url).userAgent(StaticUtil.ua).connectTimeout(2000))
+                    Request.Get(url).userAgent(StaticUtil.ua).connectTimeout(3000))
                     .returnContent().asString(Charset.forName(charSet));
            return s;
         } catch (IOException e) {
-            e.printStackTrace();
-            logger.error(ExceptionUtil.connectError.errorMessageFormat());
+            //e.printStackTrace();
+            //logger.error(ExceptionUtil.connectError.errorMessageFormat());
+            return null;
+        }catch (Exception e){
             return null;
         }
+    }
+
+    @Override
+    public Document getPageDocument(String url) {
+        Document doc = null;
+        try {
+            doc = Jsoup.connect("http://news.sina.com.cn/")
+                    .userAgent("Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN; rv:1.9.2.15)")
+                    .timeout(5000).get();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return doc;
     }
 
 }

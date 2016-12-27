@@ -40,4 +40,9 @@ public class RedisUtil {
         }
         return redisUtil;
     }
+
+    public long insert(String key, String value){
+        Long append = redis.append(key, value);
+        return append;
+    }
 }
