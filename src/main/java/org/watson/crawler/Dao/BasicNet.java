@@ -33,8 +33,10 @@ public class BasicNet implements BasicCrawler<OriginalInfo>{
                     .returnContent().asString(Charset.forName(charSet));
            return s;
         } catch (IOException e) {
-            e.printStackTrace();
-            logger.error(ExceptionUtil.connectError.errorMessageFormat());
+            //e.printStackTrace();
+            //logger.error(ExceptionUtil.connectError.errorMessageFormat());
+            return null;
+        }catch (Exception e){
             return null;
         }
     }

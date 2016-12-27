@@ -5,6 +5,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.watson.crawler.bean.ArticleElement;
 import org.watson.crawler.bean.OriginalInfo;
 import org.watson.crawler.platform.HtmlParse;
 import org.watson.crawler.utils.StaticUtil;
@@ -23,7 +24,7 @@ public class TiebaUrlParse implements HtmlParse<OriginalInfo> {
     String hostRge = "http://([^/]+)";
 
     @Override
-    public List<OriginalInfo> getUrls(String url, String srcHtmlPage){
+    public List<String> getUrls(String url, String srcHtmlPage){
 
         Matcher m = Pattern.compile(hostRge).matcher(url);
         String host = null;
@@ -50,7 +51,17 @@ public class TiebaUrlParse implements HtmlParse<OriginalInfo> {
     }
 
     @Override
+    public ArticleElement getAllElement(String url, String srcHtmlPage) {
+        return null;
+    }
+
+    @Override
     public String getHtmlContent(String url, String srcHtmlPage) {
+        return null;
+    }
+
+    @Override
+    public String getAuther(String url, String srcHtmlPage) {
         return null;
     }
 

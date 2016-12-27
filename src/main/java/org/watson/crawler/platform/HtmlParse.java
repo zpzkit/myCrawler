@@ -1,5 +1,7 @@
 package org.watson.crawler.platform;
 
+import org.watson.crawler.bean.ArticleElement;
+
 import java.util.List;
 
 /**
@@ -7,6 +9,10 @@ import java.util.List;
  */
 public interface HtmlParse<T> {
 
-    public List<T> getUrls(String url, String srcHtmlPage);
+    public List<String> getUrls(String url, String srcHtmlPage);
+
+    public ArticleElement getAllElement(String url, String srcHtmlPage);
+
     public String getHtmlContent(String url, String srcHtmlPage);
+    public String getAuther(String url, String srcHtmlPage);
 }
