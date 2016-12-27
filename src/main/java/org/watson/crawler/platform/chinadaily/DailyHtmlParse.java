@@ -1,6 +1,7 @@
 package org.watson.crawler.platform.chinadaily;
 
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.watson.crawler.bean.OriginalInfo;
@@ -36,6 +37,8 @@ public class DailyHtmlParse implements HtmlParse<OriginalInfo>{
 
     @Override
     public String getHtmlContent(String url, String srcHtmlPage) {
+        Document parse = Jsoup.parse(srcHtmlPage);
+
         return null;
     }
 }
